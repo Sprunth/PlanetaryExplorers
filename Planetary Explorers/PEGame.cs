@@ -102,8 +102,6 @@ namespace Planetary_Explorers
             {
                 window_Closed(sender, e);
             }
-
-            
         }
 
         void Dispose()
