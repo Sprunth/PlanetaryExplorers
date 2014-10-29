@@ -17,6 +17,7 @@ namespace Planetary_Explorers
 
         protected RenderTexture target;
 
+        private List<IUpdateable> toUpdate; 
         
         protected Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
@@ -24,31 +25,29 @@ namespace Planetary_Explorers
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
         public event KeyPressHandler OnKeyPress;
 
-
         public Display(Vector2u displaySize, bool physicsEnabled = false)
         {
-            
+            toUpdate = new List<IUpdateable>();
+
             target = new RenderTexture(displaySize.X, displaySize.Y)
             {
                 Smooth = true
             };
 
-            
             spr = new Sprite();
         }
-
     
         public virtual void Update()
         {
-            
+            foreach (var updateable in toUpdate)
+            {
+                updateable.Update();
+            }
         }
 
         public virtual void Draw(RenderTexture sourceTexture)
         {
             target.Clear(new Color(10, 10, 10));
-
-            // Will iterate from first enum value to last
-            
 
             target.Display();
             spr.Texture = target.Texture;

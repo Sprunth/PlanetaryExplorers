@@ -25,7 +25,7 @@ namespace Planetary_Explorers
 
         public PEGame()
         {
-            ScreenSize = new Vector2u(900, 600);
+            ScreenSize = new Vector2u(1100, 600);
             var cs = new ContextSettings()
             {AntialiasingLevel = 4};
             window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Default, cs);
