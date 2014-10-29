@@ -13,8 +13,6 @@ namespace Planetary_Explorers
 {
     class Display : IUpdateable, IDrawable
     {
-        public static Display ActiveDisplay { get; set; }
-
         protected RenderTexture target;
 
         private List<IUpdateable> toUpdate; 
@@ -25,7 +23,13 @@ namespace Planetary_Explorers
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
         public event KeyPressHandler OnKeyPress;
 
-        public Display(Vector2u displaySize, bool physicsEnabled = false)
+        public delegate void MouseMoveHandler(object sender, MouseMoveEventArgs e);
+        public event MouseMoveHandler OnMouseMove;
+
+        public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
+        public event MouseReleaseHandler OnMouseRelease;
+
+        public Display(Vector2u displaySize)
         {
             toUpdate = new List<IUpdateable>();
 
@@ -54,11 +58,66 @@ namespace Planetary_Explorers
             sourceTexture.Draw(spr);
         }
 
+        /// <summary>
+        /// Subscribes and unsubscribes to window events
+        /// </summary>
+        /// <param name="on"></param>
+        /// <param name="window"></param>
+        public void EventSubscribe(bool on, RenderWindow window)
+        {
+            if (on)
+            {
+                OnResume();
+                window.KeyPressed += KeyPressed;
+                window.MouseMoved += MouseMoved;
+                window.MouseButtonReleased += MouseReleased;
+            }
+            else
+            {
+                OnPause();
+                window.KeyPressed -= KeyPressed;
+                window.MouseMoved -= MouseMoved;
+                window.MouseButtonReleased -= MouseReleased;
+            }
+        }
+
+        /// <summary>
+        /// Called when display resumes
+        /// </summary>
+        protected virtual void OnResume()
+        {
+            
+        }
+
+        /// <summary>
+        /// Called right before display is closed
+        /// </summary>
+        protected virtual void OnPause()
+        {
+            
+        }
+
         public void KeyPressed(object sender, KeyEventArgs e)
         {
             if (OnKeyPress != null)
             {
                 OnKeyPress(sender, e);
+            }
+        }
+
+        public void MouseMoved(object sender, MouseMoveEventArgs e)
+        {
+            if (OnMouseMove != null)
+            {
+                OnMouseMove(sender, e);
+            }
+        }
+
+        private void MouseReleased(object sender, MouseButtonEventArgs e)
+        {
+            if (OnMouseRelease != null)
+            {
+                OnMouseRelease(sender, e);
             }
         }
     }

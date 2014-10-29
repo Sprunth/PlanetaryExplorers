@@ -23,6 +23,8 @@ namespace Planetary_Explorers
 
         Sprite spr;
 
+        private GameManager gm;
+
         public PEGame()
         {
             ScreenSize = new Vector2u(1100, 600);
@@ -30,6 +32,8 @@ namespace Planetary_Explorers
             {AntialiasingLevel = 4};
             window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Default, cs);
             window.KeyPressed += window_KeyPressed;
+            window.MouseMoved += window_MouseMoved;
+            window.MouseButtonReleased += window_MouseButtonReleased;
 
             window.SetFramerateLimit(60);
             window.SetVerticalSyncEnabled(false);
@@ -44,7 +48,8 @@ namespace Planetary_Explorers
 
         public void Initialize()
         {
-
+            // TODO: Use actual display rather than this generic one
+            gm = new GameManager(window, new Display(ScreenSize));
         }
 
         public void Run()
@@ -76,12 +81,13 @@ namespace Planetary_Explorers
         private void Update()
         {
             window.DispatchEvents();
+            gm.Update();
         }
 
         private void Draw()
         {
             target.Clear(new Color(210, 230, 200));
-            
+            gm.Draw(target);
             target.Display();
 
             spr.Texture = target.Texture;
@@ -102,6 +108,16 @@ namespace Planetary_Explorers
             {
                 window_Closed(sender, e);
             }
+        }
+
+        void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        void window_MouseMoved(object sender, MouseMoveEventArgs e)
+        {
+
         }
 
         void Dispose()
