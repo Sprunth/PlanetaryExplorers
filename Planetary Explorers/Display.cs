@@ -29,9 +29,12 @@ namespace Planetary_Explorers
         public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
         public event MouseReleaseHandler OnMouseRelease;
 
+        private List<DrawableObject> toDraw; 
+
         public Display(Vector2u displaySize)
         {
             toUpdate = new List<IUpdateable>();
+            toDraw = new List<DrawableObject>();
 
             target = new RenderTexture(displaySize.X, displaySize.Y)
             {

@@ -9,7 +9,6 @@ using SFML.Audio;
 using SFML.Graphics;
 using SFML.Window;
 
-
 using System.Diagnostics;
 
 namespace Planetary_Explorers
@@ -50,6 +49,8 @@ namespace Planetary_Explorers
         {
             // TODO: Use actual display rather than this generic one
             gm = new GameManager(window, new Display(ScreenSize));
+
+            new DrawableObject();
         }
 
         public void Run()

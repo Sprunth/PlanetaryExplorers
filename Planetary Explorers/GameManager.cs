@@ -20,10 +20,13 @@ namespace Planetary_Explorers
             get { return activeDisplayRoot; }
             set
             {
-                ActiveDisplayRoot.EventSubscribe(false,window);
+                if (ActiveDisplayRoot != null)
+                    ActiveDisplayRoot.EventSubscribe(false,window);
                 if (!allDisplays.Contains(value))
                 { allDisplays.Add(value); }
                 value.EventSubscribe(true, window);
+
+                activeDisplayRoot = value;
             }
         }
 
