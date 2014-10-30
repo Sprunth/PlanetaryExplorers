@@ -1,6 +1,10 @@
-﻿using System;
+﻿//#define ZLEVEL_TEST
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,19 +21,7 @@ namespace Planetary_Explorers
         {
             this.parentDisplay = parentDisplay;
 
-            var r = new Random();
-            for (int i = 0; i < 100; i++)
-            {
-                var zlevel = (uint) r.Next(25);
-                var cs = new CircleShape(16, 48)
-                {
-                    Position = new Vector2f(40 + r.Next(200), 40 + r.Next(200)),
-                    OutlineColor = new Color(20, 20, 20),
-                    OutlineThickness = 2,
-                    FillColor = new Color((byte)(zlevel*10), 0, 0) //(byte)(150 + r.Next(80)), (byte)(150 + r.Next(80)))
-                };
-                AddItemToDraw(cs, zlevel);
-            }
+            ZLevelTest();
         }
 
         private void AddItemToDraw(Drawable drawable, uint zlevel)
@@ -46,6 +38,24 @@ namespace Planetary_Explorers
         {
             // Could be sped up with binary search, or keep an index.
             parentDisplay.toDraw.Remove(new Tuple<Drawable, uint>(drawable, zlevel));
+        }
+
+        [Conditional("ZLEVEL_TEST")]
+        private void ZLevelTest()
+        {
+            var r = new Random();
+            for (int i = 0; i < 100; i++)
+            {
+                var zlevel = (uint)r.Next(25);
+                var cs = new CircleShape(16, 48)
+                {
+                    Position = new Vector2f(40 + r.Next(200), 40 + r.Next(200)),
+                    OutlineColor = new Color(20, 20, 20),
+                    OutlineThickness = 1,
+                    FillColor = new Color((byte)(zlevel * 10), 0, 0) //(byte)(150 + r.Next(80)), (byte)(150 + r.Next(80)))
+                };
+                AddItemToDraw(cs, zlevel);
+            }
         }
     }
 }

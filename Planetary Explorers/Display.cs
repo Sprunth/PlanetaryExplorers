@@ -70,7 +70,8 @@ namespace Planetary_Explorers
             }
             target.Display();
             spr.Texture = target.Texture;
-            sourceTexture.Draw(spr);
+            sourceTexture.Draw(spr);//, new RenderStates(aa));
+            
         }
 
         /// <summary>
