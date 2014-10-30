@@ -5,48 +5,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using SFML.Window;
 
 namespace Planetary_Explorers
 {
     class DrawableObject
     {
-        /// <summary>
-        /// SFML objects to draw
-        /// Each contains a z-level for drawing
-        /// Do not directly add to this list. Use AddItemToDraw
-        /// </summary>
-        private List<Tuple<Drawable, uint>> toDraw;
- 
-        public DrawableObject()
+        private Display parentDisplay;
+
+        public DrawableObject(Display parentDisplay)
         {
-            toDraw = new List<Tuple<Drawable, uint>>();           
+            this.parentDisplay = parentDisplay;
+
+            var r = new Random();
+            for (int i = 0; i < 100; i++)
+            {
+                var zlevel = (uint) r.Next(25);
+                var cs = new CircleShape(16, 48)
+                {
+                    Position = new Vector2f(40 + r.Next(200), 40 + r.Next(200)),
+                    OutlineColor = new Color(20, 20, 20),
+                    OutlineThickness = 2,
+                    FillColor = new Color((byte)(zlevel*10), 0, 0) //(byte)(150 + r.Next(80)), (byte)(150 + r.Next(80)))
+                };
+                AddItemToDraw(cs, zlevel);
+            }
         }
 
         private void AddItemToDraw(Drawable drawable, uint zlevel)
         {
             var tup = new Tuple<Drawable, uint>(drawable, zlevel);
-            var index = toDraw.BinarySearch(tup, ZlevelDrawableCompare.Comparer);
+            var index = parentDisplay.toDraw.BinarySearch(tup, ZlevelDrawableCompare.Comparer);
             if (index < 0)
-                toDraw.Insert(~index, tup);
+                parentDisplay.toDraw.Insert(~index, tup);
             else
-                toDraw.Insert(index, tup);
+                parentDisplay.toDraw.Insert(index, tup);
         }
-    }
 
-    class ZlevelDrawableCompare : IComparer<Tuple<Drawable, uint>>
-    {
-        /// <summary>
-        /// Compares by zlevels, sorts 0 to +infinity.
-        /// </summary>
-        int IComparer<Tuple<Drawable, uint>>.Compare(Tuple<Drawable, uint> first, Tuple<Drawable, uint> second)
+        private void RemoveItemToDraw(Drawable drawable, uint zlevel)
         {
-            if (first.Item2 > second.Item2)
-                return 1;
-            if (first.Item2 < second.Item2)
-                return -1;
-            return 0;
+            // Could be sped up with binary search, or keep an index.
+            parentDisplay.toDraw.Remove(new Tuple<Drawable, uint>(drawable, zlevel));
         }
-
-        public static IComparer<Tuple<Drawable, uint>> Comparer = new ZlevelDrawableCompare();
     }
 }

@@ -28,8 +28,14 @@ namespace Planetary_Explorers
         {
             ScreenSize = new Vector2u(1100, 600);
             var cs = new ContextSettings()
-            {AntialiasingLevel = 4};
-            window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Default, cs);
+            {
+                DepthBits = 24,
+                StencilBits = 8,
+                AntialiasingLevel = 4,
+                MajorVersion = 0,
+                MinorVersion = 1
+            };
+            window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Close, cs);
             window.KeyPressed += window_KeyPressed;
             window.MouseMoved += window_MouseMoved;
             window.MouseButtonReleased += window_MouseButtonReleased;
@@ -48,9 +54,8 @@ namespace Planetary_Explorers
         public void Initialize()
         {
             // TODO: Use actual display rather than this generic one
-            gm = new GameManager(window, new Display(ScreenSize));
-
-            new DrawableObject();
+            var d = new Display(ScreenSize);
+            gm = new GameManager(window, d);
         }
 
         public void Run()
@@ -95,6 +100,11 @@ namespace Planetary_Explorers
 
             window.Clear();
             window.Draw(spr);
+            var cs = new CircleShape(20, 48);
+            cs.Position = new Vector2f(150,120);
+            cs.OutlineColor = Color.Black;
+            cs.OutlineThickness = 2;
+            window.Draw(cs);
             window.Display();
         }
 

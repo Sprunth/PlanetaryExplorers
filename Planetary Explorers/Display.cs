@@ -15,8 +15,8 @@ namespace Planetary_Explorers
     {
         protected RenderTexture target;
 
-        private List<IUpdateable> toUpdate; 
-        
+        private List<IUpdateable> toUpdate;
+       
         protected Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
 
@@ -29,12 +29,21 @@ namespace Planetary_Explorers
         public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
         public event MouseReleaseHandler OnMouseRelease;
 
-        private List<DrawableObject> toDraw; 
+        private List<DrawableObject> drawables;
+        /// <summary>
+        /// SFML objects to draw
+        /// Each contains a z-level for drawing
+        /// Do not directly add to this list. Use AddItemToDraw
+        /// </summary>
+        public List<Tuple<Drawable, uint>> toDraw;
+
+        public Color BackgroundColor { get; set; }
 
         public Display(Vector2u displaySize)
         {
             toUpdate = new List<IUpdateable>();
-            toDraw = new List<DrawableObject>();
+            drawables = new List<DrawableObject>();
+            toDraw = new List<Tuple<Drawable, uint>>();
 
             target = new RenderTexture(displaySize.X, displaySize.Y)
             {
@@ -54,8 +63,11 @@ namespace Planetary_Explorers
 
         public virtual void Draw(RenderTexture sourceTexture)
         {
-            target.Clear(new Color(10, 10, 10));
-
+            target.Clear(new Color(0,0,0,0));
+            foreach (var tuple in toDraw)
+            {
+                target.Draw(tuple.Item1);
+            }
             target.Display();
             spr.Texture = target.Texture;
             sourceTexture.Draw(spr);
@@ -89,7 +101,7 @@ namespace Planetary_Explorers
         /// </summary>
         protected virtual void OnResume()
         {
-            
+            drawables.Add(new DrawableObject(this));
         }
 
         /// <summary>
@@ -100,7 +112,7 @@ namespace Planetary_Explorers
             
         }
 
-        public void KeyPressed(object sender, KeyEventArgs e)
+        private void KeyPressed(object sender, KeyEventArgs e)
         {
             if (OnKeyPress != null)
             {
@@ -108,7 +120,7 @@ namespace Planetary_Explorers
             }
         }
 
-        public void MouseMoved(object sender, MouseMoveEventArgs e)
+        private void MouseMoved(object sender, MouseMoveEventArgs e)
         {
             if (OnMouseMove != null)
             {
@@ -123,5 +135,22 @@ namespace Planetary_Explorers
                 OnMouseRelease(sender, e);
             }
         }
+    }
+
+    class ZlevelDrawableCompare : IComparer<Tuple<Drawable, uint>>
+    {
+        /// <summary>
+        /// Compares by zlevels, sorts 0 to +infinity.
+        /// </summary>
+        int IComparer<Tuple<Drawable, uint>>.Compare(Tuple<Drawable, uint> first, Tuple<Drawable, uint> second)
+        {
+            if (first.Item2 > second.Item2)
+                return 1;
+            if (first.Item2 < second.Item2)
+                return -1;
+            return 0;
+        }
+
+        public static IComparer<Tuple<Drawable, uint>> Comparer = new ZlevelDrawableCompare();
     }
 }
