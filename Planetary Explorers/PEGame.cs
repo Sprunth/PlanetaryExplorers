@@ -56,6 +56,8 @@ namespace Planetary_Explorers
             // TODO: Use actual display rather than this generic one
             var d = new Display(ScreenSize);
             gm = new GameManager(window, d);
+
+            gm.ActiveDisplayRoot = new SpaceMapDisplay(new Vector2u(600,400));
         }
 
         public void Run()

@@ -78,6 +78,8 @@
     <Compile Include="PEGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpaceGrid.cs" />
+    <Compile Include="SpaceMapDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
