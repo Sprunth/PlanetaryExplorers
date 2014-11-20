@@ -17,7 +17,13 @@ namespace Planetary_Explorers
         public SpaceGrid(Vector2u mapSize, Vector2u displaySize, Display parentDisplay)
             : base(parentDisplay)
         {
-            var gridSize = 16;
+            SetupGrid(mapSize);
+            
+        }
+
+        private void SetupGrid(Vector2u mapSize)
+        {
+            var gridSize = 8;
             gridTexture = new RenderTexture(2000, 2000);
             var col = new Color(120, 120, 120);
             var verticies = new List<Vertex>();
@@ -34,8 +40,9 @@ namespace Planetary_Explorers
             var gridlines = verticies.ToArray();
 
             gridTexture.Clear(new Color(190, 190, 190));
-            view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));
-            //gridTexture.SetView(view);
+            //view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));
+            view = new View(new FloatRect(0, 0, 600, 600));
+            gridTexture.SetView(view);
             gridTexture.Draw(gridlines, PrimitiveType.Lines);
             gridTexture.Display();
 

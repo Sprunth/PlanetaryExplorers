@@ -26,6 +26,9 @@ namespace Planetary_Explorers
         public delegate void MouseMoveHandler(object sender, MouseMoveEventArgs e);
         public event MouseMoveHandler OnMouseMove;
 
+        public delegate void MousePressHandler(object sender, MouseButtonEventArgs e);
+        public event MousePressHandler OnMousePress;
+
         public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
         public event MouseReleaseHandler OnMouseRelease;
 
@@ -86,6 +89,7 @@ namespace Planetary_Explorers
                 OnResume();
                 window.KeyPressed += KeyPressed;
                 window.MouseMoved += MouseMoved;
+                window.MouseButtonPressed += MousePressed;
                 window.MouseButtonReleased += MouseReleased;
             }
             else
@@ -93,6 +97,7 @@ namespace Planetary_Explorers
                 OnPause();
                 window.KeyPressed -= KeyPressed;
                 window.MouseMoved -= MouseMoved;
+                window.MouseButtonPressed -= MousePressed;
                 window.MouseButtonReleased -= MouseReleased;
             }
         }
@@ -126,6 +131,14 @@ namespace Planetary_Explorers
             if (OnMouseMove != null)
             {
                 OnMouseMove(sender, e);
+            }
+        }
+
+        private void MousePressed(object sender, MouseButtonEventArgs e)
+        {
+            if (OnMousePress != null)
+            {
+                OnMousePress(sender, e);
             }
         }
 
