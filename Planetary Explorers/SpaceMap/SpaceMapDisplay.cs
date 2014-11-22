@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace Planetary_Explorers
+namespace Planetary_Explorers.Displays
 {
     class SpaceMapDisplay : Display
     {

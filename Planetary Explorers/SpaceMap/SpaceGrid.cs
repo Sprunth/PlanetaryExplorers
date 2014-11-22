@@ -58,7 +58,7 @@ namespace Planetary_Explorers
             {
                 var mousePos = new Vector2i(e.X, e.Y);
                 var diffVec = mousePos - mousePrevDragPos;
-                view.Move(new Vector2f(diffVec.X, diffVec.Y));
+                view.Move(new Vector2f(-diffVec.X/2f, -diffVec.Y/2f));
                 gridTexture.SetView(view);
                 mousePrevDragPos = mousePos;
             }
