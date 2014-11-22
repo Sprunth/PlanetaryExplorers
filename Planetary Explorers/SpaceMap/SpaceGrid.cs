@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace Planetary_Explorers
+namespace Planetary_Explorers.SpaceMap
 {
     class SpaceGrid : DrawableObject
     {
@@ -52,7 +52,7 @@ namespace Planetary_Explorers
 
         void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
         {
-            Debug.WriteLine(gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
+            //Debug.WriteLine(gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
 
             if (dragging)
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Planetary_Explorers.Displays;
+using Planetary_Explorers.SpaceMap;
 using SFML;
 using SFML.Audio;
 using SFML.Graphics;

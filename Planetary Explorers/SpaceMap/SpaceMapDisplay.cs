@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace Planetary_Explorers.Displays
+namespace Planetary_Explorers.SpaceMap
 {
     class SpaceMapDisplay : Display
     {
@@ -16,6 +16,19 @@ namespace Planetary_Explorers.Displays
         {
             grid = new SpaceGrid(new Vector2u(2000,2000), displaySize, this);
             toUpdate.Add(grid);
+
+            var planet = new Planet(this);
+            toUpdate.Add(planet);
+
+        }
+
+        public override void Update()
+        {
+            foreach (var updatable in toUpdate)
+            {
+                // change position to match grid
+            }
+            base.Update();
         }
     }
 }

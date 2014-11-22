@@ -52,6 +52,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libnoise, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\vs13lib\libnoise-1706\libnoise\bin\Debug\libnoise.dll</HintPath>
+    </Reference>
     <Reference Include="sfmlnet-audio-2">
       <HintPath>..\..\..\..\..\..\..\vs2013libs\SFML.Net-2.1\lib\sfmlnet-audio-2.dll</HintPath>
     </Reference>
@@ -63,6 +67,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,8 +83,9 @@
     <Compile Include="PEGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpaceGrid.cs" />
-    <Compile Include="Displays\SpaceMapDisplay.cs" />
+    <Compile Include="SpaceMap\Planet.cs" />
+    <Compile Include="SpaceMap\SpaceGrid.cs" />
+    <Compile Include="SpaceMap\SpaceMapDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
