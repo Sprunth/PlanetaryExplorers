@@ -15,7 +15,7 @@ namespace Planetary_Explorers
         public SpaceMapDisplay(Vector2u displaySize): base(displaySize)
         {
             grid = new SpaceGrid(new Vector2u(2000,2000), displaySize, this);
-
+            toUpdate.Add(grid);
         }
     }
 }

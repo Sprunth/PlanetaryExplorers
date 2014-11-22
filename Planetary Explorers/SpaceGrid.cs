@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,13 +13,66 @@ namespace Planetary_Explorers
     {
         private View view;
         private RenderTexture gridTexture;
+        private Vertex[] gridlines; 
         private Sprite grid;
+
+        private bool dragging;
+        private Vector2i mousePrevDragPos;
 
         public SpaceGrid(Vector2u mapSize, Vector2u displaySize, Display parentDisplay)
             : base(parentDisplay)
         {
             SetupGrid(mapSize);
-            
+
+            dragging = false;
+
+            parentDisplay.OnMouseMove += parentDisplay_OnMouseMove;
+            parentDisplay.OnMousePress += parentDisplay_OnMousePress;
+            parentDisplay.OnMouseRelease += parentDisplay_OnMouseRelease;
+            parentDisplay.OnKeyPress += parentDisplay_OnKeyPress;
+        }
+        
+        public override void Update()
+        {
+            gridTexture.Clear(new Color(190, 190, 190));
+            gridTexture.Draw(gridlines, PrimitiveType.Lines);
+            gridTexture.Display();
+            grid.Texture = gridTexture.Texture;
+            base.Update();
+        }
+
+        void parentDisplay_OnKeyPress(object sender, KeyEventArgs e)
+        {
+            if (e.Code == Keyboard.Key.Right)
+            {
+                view.Move(new Vector2f(10,0));
+                gridTexture.SetView(view);
+            }
+        }
+
+        void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
+        {
+            Debug.WriteLine(gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
+
+            if (dragging)
+            {
+                var mousePos = new Vector2i(e.X, e.Y);
+                var diffVec = mousePos - mousePrevDragPos;
+                view.Move(new Vector2f(diffVec.X, diffVec.Y));
+                gridTexture.SetView(view);
+                mousePrevDragPos = mousePos;
+            }
+        }
+
+        void parentDisplay_OnMousePress(object sender, MouseButtonEventArgs e)
+        {
+            dragging = true;
+            mousePrevDragPos = new Vector2i(e.X, e.Y);
+        }
+
+        void parentDisplay_OnMouseRelease(object sender, MouseButtonEventArgs e)
+        {
+            dragging = false;
         }
 
         private void SetupGrid(Vector2u mapSize)
@@ -37,7 +91,7 @@ namespace Planetary_Explorers
                 verticies.Add(new Vertex(new Vector2f(0, y), col));
                 verticies.Add(new Vertex(new Vector2f(mapSize.X, y), col));
             }
-            var gridlines = verticies.ToArray();
+            gridlines = verticies.ToArray();
 
             gridTexture.Clear(new Color(190, 190, 190));
             //view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));

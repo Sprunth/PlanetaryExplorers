@@ -14,8 +14,6 @@ namespace Planetary_Explorers
     class Display : IUpdateable, IDrawable
     {
         protected RenderTexture target;
-
-        private List<IUpdateable> toUpdate;
        
         protected Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
@@ -31,7 +29,8 @@ namespace Planetary_Explorers
 
         public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
         public event MouseReleaseHandler OnMouseRelease;
-
+        
+        protected List<IUpdateable> toUpdate;
         private List<DrawableObject> drawables;
         /// <summary>
         /// SFML objects to draw

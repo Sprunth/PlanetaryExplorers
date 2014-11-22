@@ -1,0 +1,10 @@
+diff a/Planetary Explorers/SpaceGrid.cs b/Planetary Explorers/SpaceGrid.cs	(rejected hunks)
+@@ -17,7 +17,7 @@
+         public SpaceGrid(Vector2u mapSize, Vector2u displaySize, Display parentDisplay)
+             : base(parentDisplay)
+         {
+-            var gridSize = 16;
++            var gridSize = 8;
+             gridTexture = new RenderTexture(2000, 2000);
+             var col = new Color(120, 120, 120);
+             var verticies = new List<Vertex>();

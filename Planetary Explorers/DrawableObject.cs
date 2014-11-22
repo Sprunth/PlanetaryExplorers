@@ -13,7 +13,7 @@ using SFML.Window;
 
 namespace Planetary_Explorers
 {
-    class DrawableObject
+    class DrawableObject : IUpdateable
     {
         private Display parentDisplay;
 
@@ -57,6 +57,11 @@ namespace Planetary_Explorers
                 };
                 AddItemToDraw(cs, zlevel);
             }
+        }
+
+        public virtual void Update()
+        {
+            
         }
     }
 }
