@@ -22,12 +22,12 @@ namespace Planetary_Explorers.SpaceMap
 
         public Planet(Display parentDisplay) : base(parentDisplay)
         {
-            cs = new CircleShape(64, 64);
+            cs = new CircleShape(32, 32);
             cs.Position = new Vector2f(256, 128);
             cs.OutlineThickness = 3;
-            cs.OutlineColor = new SFML.Graphics.Color(77,53,15);
+            cs.OutlineColor = new SFML.Graphics.Color(30,20,10);
             //cs.FillColor = SFML.Graphics.Color.Magenta;
-            cs.Texture = GeneratePlanetTexture();
+            cs.Texture = GeneratePlanetTexture(new Vector2u((uint)cs.Radius*2, (uint)cs.Radius*2));
 
             AddItemToDraw(cs, 5);
         }
@@ -37,9 +37,9 @@ namespace Planetary_Explorers.SpaceMap
         private static PlanarNoiseMapBuilder heightMapBuilder;
         private static Perlin module;
 
-        private static Texture GeneratePlanetTexture()
+        private static Texture GeneratePlanetTexture(Vector2u texSize)
         {
-            var imgSize = new Vector2u(64, 64);
+            var imgSize = texSize;
             module = new Perlin(2, 0.2, NoiseQuality.Best, 4, 0.3, random.Next(0,1024));
             heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, module, 2, 6, 1, 5, false);
             heightMap = heightMapBuilder.Build();
