@@ -9,7 +9,7 @@ using SFML.Window;
 
 namespace Planetary_Explorers.SpaceMap
 {
-    class SpaceGrid : DrawableObject
+    class SpaceGrid : Display
     {
         private View view;
         private RenderTexture gridTexture;
@@ -19,17 +19,22 @@ namespace Planetary_Explorers.SpaceMap
         private bool dragging;
         private Vector2i mousePrevDragPos;
 
-        public SpaceGrid(Vector2u mapSize, Vector2u displaySize, Display parentDisplay)
-            : base(parentDisplay)
+        private Planet p;
+
+        public SpaceGrid(Vector2u mapSize, Vector2u displaySize)
+            : base(displaySize)
         {
             SetupGrid(mapSize);
 
             dragging = false;
 
-            parentDisplay.OnMouseMove += parentDisplay_OnMouseMove;
-            parentDisplay.OnMousePress += parentDisplay_OnMousePress;
-            parentDisplay.OnMouseRelease += parentDisplay_OnMouseRelease;
-            parentDisplay.OnKeyPress += parentDisplay_OnKeyPress;
+
+            OnMouseMove += SpaceGrid_OnMouseMove;
+            OnMousePress += SpaceGrid_OnMousePress;
+            OnMouseRelease += SpaceGrid_OnMouseRelease;
+            OnKeyPress += SpaceGrid_OnKeyPress;
+
+            p = new Planet(this);
         }
         
         public override void Update()
@@ -41,43 +46,9 @@ namespace Planetary_Explorers.SpaceMap
             base.Update();
         }
 
-        void parentDisplay_OnKeyPress(object sender, KeyEventArgs e)
-        {
-            if (e.Code == Keyboard.Key.Right)
-            {
-                view.Move(new Vector2f(10,0));
-                gridTexture.SetView(view);
-            }
-        }
-
-        void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
-        {
-            //Debug.WriteLine(gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
-
-            if (dragging)
-            {
-                var mousePos = new Vector2i(e.X, e.Y);
-                var diffVec = mousePos - mousePrevDragPos;
-                view.Move(new Vector2f(-diffVec.X/2f, -diffVec.Y/2f));
-                gridTexture.SetView(view);
-                mousePrevDragPos = mousePos;
-            }
-        }
-
-        void parentDisplay_OnMousePress(object sender, MouseButtonEventArgs e)
-        {
-            dragging = true;
-            mousePrevDragPos = new Vector2i(e.X, e.Y);
-        }
-
-        void parentDisplay_OnMouseRelease(object sender, MouseButtonEventArgs e)
-        {
-            dragging = false;
-        }
-
         private void SetupGrid(Vector2u mapSize)
         {
-            var gridSize = 8;
+            var gridSize = 16;
             gridTexture = new RenderTexture(2000, 2000);
             var col = new Color(120, 120, 120);
             var verticies = new List<Vertex>();
@@ -95,13 +66,50 @@ namespace Planetary_Explorers.SpaceMap
 
             gridTexture.Clear(new Color(190, 190, 190));
             //view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));
-            view = new View(new FloatRect(0, 0, 600, 600));
-            gridTexture.SetView(view);
+            view = new View(new FloatRect(0, 0, DisplayView.Size.X, DisplayView.Size.Y));
+            DisplayView = view;
+            //gridTexture.SetView(view);
             gridTexture.Draw(gridlines, PrimitiveType.Lines);
             gridTexture.Display();
 
             grid = new Sprite(gridTexture.Texture);
             AddItemToDraw(grid, 0);
+        }
+
+        void SpaceGrid_OnKeyPress(object sender, KeyEventArgs e)
+        {
+            if (e.Code == Keyboard.Key.Right)
+            {
+                view.Move(new Vector2f(10, 0));
+                DisplayView = view;
+                //gridTexture.SetView(view);
+            }
+        }
+
+        void SpaceGrid_OnMouseMove(object sender, MouseMoveEventArgs e)
+        {
+            //Debug.WriteLine(gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
+
+            if (dragging)
+            {
+                var mousePos = new Vector2i(e.X, e.Y);
+                var diffVec = mousePos - mousePrevDragPos;
+                view.Move(new Vector2f(-diffVec.X / 2f, -diffVec.Y / 2f));
+                DisplayView = view;
+                //gridTexture.SetView(view);
+                mousePrevDragPos = mousePos;
+            }
+        }
+
+        void SpaceGrid_OnMousePress(object sender, MouseButtonEventArgs e)
+        {
+            dragging = true;
+            mousePrevDragPos = new Vector2i(e.X, e.Y);
+        }
+
+        void SpaceGrid_OnMouseRelease(object sender, MouseButtonEventArgs e)
+        {
+            dragging = false;
         }
     }
 }
