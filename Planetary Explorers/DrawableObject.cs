@@ -27,18 +27,12 @@ namespace Planetary_Explorers
 
         protected void AddItemToDraw(Drawable drawable, uint zlevel)
         {
-            var tup = new Tuple<Drawable, uint>(drawable, zlevel);
-            var index = parentDisplay.toDraw.BinarySearch(tup, ZlevelDrawableCompare.Comparer);
-            if (index < 0)
-                parentDisplay.toDraw.Insert(~index, tup);
-            else
-                parentDisplay.toDraw.Insert(index, tup);
+            parentDisplay.AddItemToDraw(drawable, zlevel);
         }
 
         protected void RemoveItemToDraw(Drawable drawable, uint zlevel)
         {
-            // Could be sped up with binary search, or keep an index.
-            parentDisplay.toDraw.Remove(new Tuple<Drawable, uint>(drawable, zlevel));
+            parentDisplay.RemoveItemToDraw(drawable, zlevel);   
         }
 
         [Conditional("ZLEVEL_TEST")]

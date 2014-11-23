@@ -13,9 +13,10 @@ namespace Planetary_Explorers
 {
     class Display : IUpdateable, IDrawable
     {
-        protected RenderTexture target;
+        private RenderTexture target;
+        protected View DisplayView { get { return target.GetView(); } set { target.SetView(value);} }
        
-        protected Sprite spr;
+        private Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
 
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
@@ -115,6 +116,22 @@ namespace Planetary_Explorers
         protected virtual void OnPause()
         {
             
+        }
+
+        public void AddItemToDraw(Drawable drawable, uint zlevel)
+        {
+            var tup = new Tuple<Drawable, uint>(drawable, zlevel);
+            var index = toDraw.BinarySearch(tup, ZlevelDrawableCompare.Comparer);
+            if (index < 0)
+                toDraw.Insert(~index, tup);
+            else
+                toDraw.Insert(index, tup);
+        }
+
+        public void RemoveItemToDraw(Drawable drawable, uint zlevel)
+        {
+            // Could be sped up with binary search, or keep an index.
+            toDraw.Remove(new Tuple<Drawable, uint>(drawable, zlevel));
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)

@@ -57,7 +57,7 @@ namespace Planetary_Explorers
             var d = new Display(ScreenSize);
             gm = new GameManager(window, d);
 
-            gm.ActiveDisplayRoot = new SpaceMapDisplay(new Vector2u(600,400));
+            gm.ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000,2000), new Vector2u(800,600));
         }
 
         public void Run()
