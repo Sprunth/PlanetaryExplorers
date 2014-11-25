@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using Noise;
 using Noise.Modules;
@@ -24,16 +25,33 @@ namespace Planetary_Explorers.SpaceMap
             cs.Position = new Vector2f(256, 128);
             cs.OutlineThickness = 3;
             cs.OutlineColor = new Color(30, 20, 10);
+            cs.Origin = new Vector2f(16, 16);
             //cs.FillColor = SFML.Graphics.Color.Magenta;
             cs.Texture = GeneratePlanetTexture(new Vector2u((uint) cs.Radius*2, (uint) cs.Radius*2));
 
             AddItemToDraw(cs, 5);
+
+            parentDisplay.OnMouseMove += parentDisplay_OnMouseMove;
+        }
+
+        void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
+        {
+            var dist = Math.Sqrt(
+                Math.Pow(e.X - (cs.Position.X + cs.Origin.X), 2) +
+                Math.Pow(e.Y - (cs.Position.Y + cs.Origin.Y), 2));
+            Debug.WriteLine(cs.Position + "|" + e.X + "|" + e.Y);
+            if (dist < cs.Radius)
+            {
+                // within planet's sprite
+                cs.FillColor = new Color(255,255,255);
+            }
+            else { cs.FillColor = new Color(200,200,200); }
         }
 
         private static Texture GeneratePlanetTexture(Vector2u texSize)
         {
             Vector2u imgSize = texSize;
-            module = new Perlin(2, 0.2, NoiseQuality.Best, 4, 0.3, random.Next(0, 1024));
+            module = new Perlin(3, 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
             heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, module, 2, 6, 1, 5, false);
             heightMap = heightMapBuilder.Build();
 

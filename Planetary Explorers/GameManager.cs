@@ -10,7 +10,7 @@ namespace Planetary_Explorers
 {
     class GameManager : IUpdateable, IDrawable
     {
-        private List<Display> allDisplays; 
+        private List<Display> allPageDisplays; 
         /// <summary>
         /// Internal. Do not set this variable! Use the public property
         /// </summary>
@@ -22,8 +22,8 @@ namespace Planetary_Explorers
             {
                 if (ActiveDisplayRoot != null)
                     ActiveDisplayRoot.EventSubscribe(false,window);
-                if (!allDisplays.Contains(value))
-                { allDisplays.Add(value); }
+                if (!allPageDisplays.Contains(value))
+                { allPageDisplays.Add(value); }
                 value.EventSubscribe(true, window);
 
                 activeDisplayRoot = value;
@@ -35,7 +35,7 @@ namespace Planetary_Explorers
         public GameManager(RenderWindow window, Display firstDisplay)
         {
             this.window = window;
-            allDisplays = new List<Display>();
+            allPageDisplays = new List<Display>();
             ActiveDisplayRoot = firstDisplay;
         }
 
