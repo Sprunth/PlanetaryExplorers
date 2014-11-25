@@ -11,13 +11,15 @@ using SFML.Window;
 
 namespace Planetary_Explorers
 {
-    class Display : IUpdateable, IDrawable
+    class Display : IUpdateable, IDrawable, Drawable
     {
         private RenderTexture target;
         protected View DisplayView { get { return target.GetView(); } set { target.SetView(value);} }
        
         private Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
+
+        public RenderTarget Target { get { return target; } }
 
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
         public event KeyPressHandler OnKeyPress;
@@ -53,6 +55,8 @@ namespace Planetary_Explorers
                 Smooth = true
             };
 
+            BackgroundColor = new Color(0, 0, 0, 0);
+
             spr = new Sprite();
         }
     
@@ -66,15 +70,24 @@ namespace Planetary_Explorers
 
         public virtual void Draw(RenderTexture sourceTexture)
         {
-            target.Clear(new Color(0,0,0,0));
+            Draw((RenderTarget)sourceTexture);
+        }
+
+        public virtual void Draw(RenderTarget sourceTarget)
+        {
+            target.Clear(BackgroundColor);
             foreach (var tuple in toDraw)
             {
                 target.Draw(tuple.Item1);
             }
             target.Display();
             spr.Texture = target.Texture;
-            sourceTexture.Draw(spr);//, new RenderStates(aa));
-            
+            sourceTarget.Draw(spr);//, new RenderStates(aa));
+        }
+
+        void Drawable.Draw(RenderTarget target, RenderStates states)
+        {
+            Draw(target);
         }
 
         /// <summary>
@@ -120,6 +133,10 @@ namespace Planetary_Explorers
 
         public void AddItemToDraw(Drawable drawable, uint zlevel)
         {
+            if (toDraw.Contains(new Tuple<Drawable, uint>(drawable, zlevel)))
+            {
+                return;
+            }
             var tup = new Tuple<Drawable, uint>(drawable, zlevel);
             var index = toDraw.BinarySearch(tup, ZlevelDrawableCompare.Comparer);
             if (index < 0)
@@ -165,6 +182,7 @@ namespace Planetary_Explorers
                 OnMouseRelease(sender, e);
             }
         }
+
     }
 
     class ZlevelDrawableCompare : IComparer<Tuple<Drawable, uint>>

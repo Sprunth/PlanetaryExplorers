@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
+using Planetary_Explorers.Gui;
 using SFML.Graphics;
 
 namespace Planetary_Explorers
@@ -31,12 +32,17 @@ namespace Planetary_Explorers
         }
 
         private RenderWindow window;
+        public static RenderWindow ActiveWindow { get; private set; }
+        private FontManager FontMgr;
 
         public GameManager(RenderWindow window, Display firstDisplay)
         {
             this.window = window;
+            ActiveWindow = window;
             allPageDisplays = new List<Display>();
             ActiveDisplayRoot = firstDisplay;
+
+            FontMgr = new FontManager(@"Gui/OpenSans.ttf");
         }
 
         public void Update()

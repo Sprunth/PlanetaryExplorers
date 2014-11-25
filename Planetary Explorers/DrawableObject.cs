@@ -15,7 +15,7 @@ namespace Planetary_Explorers
 {
     class DrawableObject : IUpdateable
     {
-        private Display parentDisplay;
+        protected Display parentDisplay;
 
         public DrawableObject(Display parentDisplay)
         {

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using Noise;
 using Noise.Modules;
 using Noise.Utils;
+using Planetary_Explorers.Gui;
 using SFML.Graphics;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
@@ -18,6 +20,7 @@ namespace Planetary_Explorers.SpaceMap
         private static PlanarNoiseMapBuilder heightMapBuilder;
         private static Perlin module;
         private CircleShape cs;
+        private Label hoverText;
 
         public Planet(Display parentDisplay) : base(parentDisplay)
         {
@@ -31,21 +34,33 @@ namespace Planetary_Explorers.SpaceMap
 
             AddItemToDraw(cs, 5);
 
+            hoverText = new Label("Planet", FontManager.ActiveFontManager, new Vector2u(100,40));
+
             parentDisplay.OnMouseMove += parentDisplay_OnMouseMove;
         }
 
         void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
         {
+            var mouseCoords = parentDisplay.Target.MapPixelToCoords(
+                new Vector2i((int)Math.Round((double)e.X), (int)Math.Round((double)e.Y)));
             var dist = Math.Sqrt(
-                Math.Pow(e.X - (cs.Position.X + cs.Origin.X), 2) +
-                Math.Pow(e.Y - (cs.Position.Y + cs.Origin.Y), 2));
-            Debug.WriteLine(cs.Position + "|" + e.X + "|" + e.Y);
+                Math.Pow(mouseCoords.X - (cs.Position.X + cs.Origin.X), 2) +
+                Math.Pow(mouseCoords.Y - (cs.Position.Y + cs.Origin.Y), 2));
+            //Debug.WriteLine(cs.Position + "|" + e.X + "|" + e.Y);
             if (dist < cs.Radius)
             {
                 // within planet's sprite
-                cs.FillColor = new Color(255,255,255);
+                cs.FillColor = new Color(255, 255, 255);
+                hoverText.EventSubscribe(true, GameManager.ActiveWindow);
+                AddItemToDraw(hoverText, 30);
+                hoverText.Position = mouseCoords + new Vector2f(20, -20);
             }
-            else { cs.FillColor = new Color(200,200,200); }
+            else
+            {
+                cs.FillColor = new Color(200,200,200);
+                hoverText.EventSubscribe(false, GameManager.ActiveWindow);
+                RemoveItemToDraw(hoverText, 30);
+            }
         }
 
         private static Texture GeneratePlanetTexture(Vector2u texSize)
