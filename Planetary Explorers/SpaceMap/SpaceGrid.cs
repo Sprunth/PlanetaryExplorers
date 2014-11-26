@@ -28,7 +28,7 @@ namespace Planetary_Explorers.SpaceMap
 
             dragging = false;
 
-
+            OnLostFocus += SpaceGrid_OnLostFocus;
             OnMouseMove += SpaceGrid_OnMouseMove;
             OnMousePress += SpaceGrid_OnMousePress;
             OnMouseRelease += SpaceGrid_OnMouseRelease;
@@ -74,6 +74,12 @@ namespace Planetary_Explorers.SpaceMap
 
             grid = new Sprite(gridTexture.Texture);
             AddItemToDraw(grid, 0);
+        }
+
+
+        private void SpaceGrid_OnLostFocus(object sender, EventArgs e)
+        {
+            dragging = false;
         }
 
         void SpaceGrid_OnKeyPress(object sender, KeyEventArgs e)

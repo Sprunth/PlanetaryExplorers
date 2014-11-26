@@ -21,6 +21,9 @@ namespace Planetary_Explorers
 
         public RenderTarget Target { get { return target; } }
 
+        public delegate void LostFocusHandler(object sender, EventArgs e);
+        public event LostFocusHandler OnLostFocus;
+
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
         public event KeyPressHandler OnKeyPress;
 
@@ -100,6 +103,7 @@ namespace Planetary_Explorers
             if (on)
             {
                 OnResume();
+                window.LostFocus += LostFocus;
                 window.KeyPressed += KeyPressed;
                 window.MouseMoved += MouseMoved;
                 window.MouseButtonPressed += MousePressed;
@@ -108,6 +112,7 @@ namespace Planetary_Explorers
             else
             {
                 OnPause();
+                window.LostFocus -= LostFocus;
                 window.KeyPressed -= KeyPressed;
                 window.MouseMoved -= MouseMoved;
                 window.MouseButtonPressed -= MousePressed;
@@ -159,6 +164,14 @@ namespace Planetary_Explorers
                 Smooth = true
             };
             target.SetView(viewTemp);
+        }
+
+        private void LostFocus(object sender, EventArgs e)
+        {
+            if (OnLostFocus != null)
+            {
+                OnLostFocus(sender, e);
+            }
         }
 
         private void KeyPressed(object sender, KeyEventArgs e)
