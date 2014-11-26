@@ -151,6 +151,16 @@ namespace Planetary_Explorers
             toDraw.Remove(new Tuple<Drawable, uint>(drawable, zlevel));
         }
 
+        protected void ResizeDisplay(Vector2u size)
+        {
+            var viewTemp = target.GetView();
+            target = new RenderTexture(size.X, size.Y)
+            {
+                Smooth = true
+            };
+            target.SetView(viewTemp);
+        }
+
         private void KeyPressed(object sender, KeyEventArgs e)
         {
             if (OnKeyPress != null)
