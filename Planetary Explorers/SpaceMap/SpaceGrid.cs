@@ -19,7 +19,7 @@ namespace Planetary_Explorers.SpaceMap
         private bool dragging;
         private Vector2i mousePrevDragPos;
 
-        private Planet p;
+        private List<Planet> allPlanets;
 
         public SpaceGrid(Vector2u mapSize, Vector2u displaySize)
             : base(displaySize)
@@ -34,7 +34,8 @@ namespace Planetary_Explorers.SpaceMap
             OnMouseRelease += SpaceGrid_OnMouseRelease;
             OnKeyPress += SpaceGrid_OnKeyPress;
 
-            p = new Planet(this);
+            allPlanets = new List<Planet>();
+            allPlanets.Add(new Planet(this));
         }
         
         public override void Update()
@@ -48,7 +49,7 @@ namespace Planetary_Explorers.SpaceMap
 
         private void SetupGrid(Vector2u mapSize)
         {
-            var gridSize = 16;
+            const int gridSize = 16;
             gridTexture = new RenderTexture(2000, 2000);
             var col = new Color(120, 120, 120);
             var verticies = new List<Vertex>();
@@ -76,7 +77,6 @@ namespace Planetary_Explorers.SpaceMap
             AddItemToDraw(grid, 0);
         }
 
-
         private void SpaceGrid_OnLostFocus(object sender, EventArgs e)
         {
             dragging = false;
@@ -100,7 +100,7 @@ namespace Planetary_Explorers.SpaceMap
             {
                 var mousePos = new Vector2i(e.X, e.Y);
                 var diffVec = mousePos - mousePrevDragPos;
-                view.Move(new Vector2f(-diffVec.X / 2f, -diffVec.Y / 2f));
+                view.Move(new Vector2f(-diffVec.X / 1f, -diffVec.Y / 1f));
                 DisplayView = view;
                 //gridTexture.SetView(view);
                 mousePrevDragPos = mousePos;
@@ -116,6 +116,14 @@ namespace Planetary_Explorers.SpaceMap
         void SpaceGrid_OnMouseRelease(object sender, MouseButtonEventArgs e)
         {
             dragging = false;
+
+            foreach (var planet in allPlanets)
+            {
+                if (planet.ContainsVector(e.X, e.Y))
+                    planet.Select(true);
+                else
+                    planet.Select(false);
+            }
         }
     }
 }

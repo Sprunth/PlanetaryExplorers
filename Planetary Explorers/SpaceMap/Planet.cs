@@ -27,7 +27,7 @@ namespace Planetary_Explorers.SpaceMap
             cs = new CircleShape(32, 32);
             cs.Position = new Vector2f(256, 128);
             cs.OutlineThickness = 3;
-            cs.OutlineColor = new Color(30, 20, 10);
+            cs.OutlineColor = new Color(20, 20, 20);
             cs.Origin = new Vector2f(16, 16);
             //cs.FillColor = SFML.Graphics.Color.Magenta;
             cs.Texture = GeneratePlanetTexture(new Vector2u((uint) cs.Radius*2, (uint) cs.Radius*2));
@@ -43,11 +43,7 @@ namespace Planetary_Explorers.SpaceMap
         {
             var mouseCoords = parentDisplay.Target.MapPixelToCoords(
                 new Vector2i((int)Math.Round((double)e.X), (int)Math.Round((double)e.Y)));
-            var dist = Math.Sqrt(
-                Math.Pow(mouseCoords.X - (cs.Position.X + cs.Origin.X), 2) +
-                Math.Pow(mouseCoords.Y - (cs.Position.Y + cs.Origin.Y), 2));
-            //Debug.WriteLine(cs.Position + "|" + e.X + "|" + e.Y);
-            if (dist < cs.Radius)
+            if (ContainsVector(new Vector2f(e.X, e.Y)))
             {
                 // within planet's sprite
                 cs.FillColor = new Color(255, 255, 255);
@@ -61,6 +57,31 @@ namespace Planetary_Explorers.SpaceMap
                 hoverText.EventSubscribe(false, GameManager.ActiveWindow);
                 RemoveItemToDraw(hoverText, 30);
             }
+        }
+
+        public bool ContainsVector(Vector2f vec)
+        {
+            return ContainsVector(vec.X, vec.Y);
+        }
+
+        public bool ContainsVector(double x, double y)
+        {
+            var mouseCoords = parentDisplay.Target.MapPixelToCoords(
+                new Vector2i((int)Math.Round(x), (int)Math.Round(y)));
+            var dist = Math.Sqrt(
+                Math.Pow(mouseCoords.X - (cs.Position.X + cs.Origin.X), 2) +
+                Math.Pow(mouseCoords.Y - (cs.Position.Y + cs.Origin.Y), 2));
+            return (dist < cs.Radius);
+        }
+
+        /// <summary>
+        /// Change whether to draw planet as selected or not
+        /// </summary>
+        /// <param name="select">True for selected, False for not selected</param>
+        public void Select(bool select)
+        {
+            cs.OutlineColor = select ? new Color(200, 210, 40) : new Color(20, 20, 20);
+            cs.OutlineThickness = select ? 4 : 3;
         }
 
         private static Texture GeneratePlanetTexture(Vector2u texSize)
