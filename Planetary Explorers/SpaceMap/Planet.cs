@@ -31,7 +31,6 @@ namespace Planetary_Explorers.SpaceMap
             cs.Origin = new Vector2f(16, 16);
             //cs.FillColor = SFML.Graphics.Color.Magenta;
             cs.Texture = GeneratePlanetTexture(new Vector2u((uint) cs.Radius*2, (uint) cs.Radius*2));
-
             AddItemToDraw(cs, 5);
 
             hoverText = new Label("Planet", FontManager.ActiveFontManager, new Vector2u(100,40));

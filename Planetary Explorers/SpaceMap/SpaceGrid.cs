@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.Window;
 
+using Planetary_Explorers.Spaceships;
+
 namespace Planetary_Explorers.SpaceMap
 {
     class SpaceGrid : Display
@@ -34,8 +36,12 @@ namespace Planetary_Explorers.SpaceMap
             OnMouseRelease += SpaceGrid_OnMouseRelease;
             OnKeyPress += SpaceGrid_OnKeyPress;
 
-            allPlanets = new List<Planet>();
-            allPlanets.Add(new Planet(this));
+            allPlanets = new List<Planet>
+            {
+                new Planet(this)
+            };
+
+            var ship = new Spaceship(this);
         }
         
         public override void Update()
@@ -123,6 +129,8 @@ namespace Planetary_Explorers.SpaceMap
                     planet.Select(true);
                 else
                     planet.Select(false);
+
+                
             }
         }
     }
