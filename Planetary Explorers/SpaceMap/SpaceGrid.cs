@@ -98,10 +98,8 @@ namespace Planetary_Explorers.SpaceMap
             }
         }
 
-        void SpaceGrid_OnMouseMove(object sender, MouseMoveEventArgs e)
+        void SpaceGrid_OnMouseMove(object sender, MouseMoveEventArgs e, Vector2f displayCoords)
         {
-            //Debug.WriteLine(_gridTexture.MapPixelToCoords(new Vector2i(e.X,e.Y)));
-
             if (_dragging)
             {
                 var mousePos = new Vector2i(e.X, e.Y);
@@ -113,24 +111,23 @@ namespace Planetary_Explorers.SpaceMap
             }
         }
 
-        void SpaceGrid_OnMousePress(object sender, MouseButtonEventArgs e)
+        void SpaceGrid_OnMousePress(object sender, MouseButtonEventArgs e, Vector2f displayCoords)
         {
             _dragging = true;
             _mousePrevDragPos = new Vector2i(e.X, e.Y);
         }
 
-        void SpaceGrid_OnMouseRelease(object sender, MouseButtonEventArgs e)
+        void SpaceGrid_OnMouseRelease(object sender, MouseButtonEventArgs e, Vector2f displayCoords)
         {
             _dragging = false;
 
             foreach (var planet in allPlanets)
             {
-                if (planet.ContainsVector(e.X, e.Y))
+                if (planet.ContainsVector(displayCoords.X, displayCoords.Y))
                     planet.Select(true);
                 else
                     planet.Select(false);
 
-                
             }
         }
     }

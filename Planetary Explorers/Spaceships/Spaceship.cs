@@ -22,22 +22,19 @@ namespace Planetary_Explorers.Spaceships
             parentDisplay.OnMousePress += parentDisplay_OnMousePress;
         }
 
-        void parentDisplay_OnMousePress(object sender, MouseButtonEventArgs e)
+        void parentDisplay_OnMousePress(object sender, MouseButtonEventArgs e, Vector2f displayCoords)
         {
-            if (ContainsVector(e.X, e.Y))
+            if (ContainsVector(displayCoords.X, displayCoords.Y))
             {
                 Console.WriteLine(e);
             }
         }
 
         public override bool ContainsVector(double x, double y)
-        {
-            var mouseCoords = parentDisplay.Target.MapPixelToCoords(
-                new Vector2i((int)Math.Round(x), (int)Math.Round(y)));
-            
+        {           
             return (
-                (Math.Abs(_ship.Position.X - mouseCoords.X) <= _ship.Texture.Size.X/2.0) &&
-                (Math.Abs(_ship.Position.Y - mouseCoords.Y) <= _ship.Texture.Size.Y/2.0)
+                (Math.Abs(_ship.Position.X - x) <= _ship.Texture.Size.X/2.0) &&
+                (Math.Abs(_ship.Position.Y - y) <= _ship.Texture.Size.Y/2.0)
                 );
         }
     }

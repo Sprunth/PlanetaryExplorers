@@ -27,13 +27,13 @@ namespace Planetary_Explorers
         public delegate void KeyPressHandler(object sender, KeyEventArgs e);
         public event KeyPressHandler OnKeyPress;
 
-        public delegate void MouseMoveHandler(object sender, MouseMoveEventArgs e);
+        public delegate void MouseMoveHandler(object sender, MouseMoveEventArgs e, Vector2f displayCoords);
         public event MouseMoveHandler OnMouseMove;
 
-        public delegate void MousePressHandler(object sender, MouseButtonEventArgs e);
+        public delegate void MousePressHandler(object sender, MouseButtonEventArgs e, Vector2f displayCoords);
         public event MousePressHandler OnMousePress;
 
-        public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e);
+        public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e, Vector2f displayCoords);
         public event MouseReleaseHandler OnMouseRelease;
         
         protected List<IUpdateable> toUpdate;
@@ -186,7 +186,7 @@ namespace Planetary_Explorers
         {
             if (OnMouseMove != null)
             {
-                OnMouseMove(sender, e);
+                OnMouseMove(sender, e, MouseCoordToDisplayCoord(e));
             }
         }
 
@@ -194,7 +194,7 @@ namespace Planetary_Explorers
         {
             if (OnMousePress != null)
             {
-                OnMousePress(sender, e);
+                OnMousePress(sender, e, MouseCoordToDisplayCoord(e));
             }
         }
 
@@ -202,10 +202,21 @@ namespace Planetary_Explorers
         {
             if (OnMouseRelease != null)
             {
-                OnMouseRelease(sender, e);
+                OnMouseRelease(sender, e, MouseCoordToDisplayCoord(e));
             }
         }
 
+        private Vector2f MouseCoordToDisplayCoord(MouseMoveEventArgs e)
+        { return MouseCoordToDisplayCoord(new Vector2i(e.X, e.Y)); }
+        private Vector2f MouseCoordToDisplayCoord(MouseButtonEventArgs e)
+        { return MouseCoordToDisplayCoord(new Vector2i(e.X, e.Y)); }
+
+        private Vector2f MouseCoordToDisplayCoord(Vector2i e)
+        {
+            return target.MapPixelToCoords(
+                e - new Vector2i((int)Math.Round(Position.X), (int)Math.Round(Position.Y))
+                );
+        }
     }
 
     class ZlevelDrawableCompare : IComparer<Tuple<Drawable, uint>>

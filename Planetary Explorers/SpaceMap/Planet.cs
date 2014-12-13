@@ -41,17 +41,15 @@ namespace Planetary_Explorers.SpaceMap
             parentDisplay.OnMouseMove += parentDisplay_OnMouseMove;
         }
 
-        void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e)
+        void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e, Vector2f displayCoords)
         {
-            var mouseCoords = parentDisplay.Target.MapPixelToCoords(
-                new Vector2i((int)Math.Round((double)e.X), (int)Math.Round((double)e.Y)));
-            if (ContainsVector(new Vector2f(e.X, e.Y)))
+            if (ContainsVector(displayCoords))
             {
                 // within planet's sprite
                 _cs.FillColor = new Color(255, 255, 255);
                 _hoverText.EventSubscribe(true, GameManager.ActiveWindow);
                 AddItemToDraw(_hoverText, 30);
-                _hoverText.Position = mouseCoords + new Vector2f(20, -20);
+                _hoverText.Position = displayCoords + new Vector2f(20, -20);
             }
             else
             {
@@ -63,11 +61,9 @@ namespace Planetary_Explorers.SpaceMap
 
         public override bool ContainsVector(double x, double y)
         {
-            var mouseCoords = parentDisplay.Target.MapPixelToCoords(
-                new Vector2i((int)Math.Round(x), (int)Math.Round(y)));
             var dist = Math.Sqrt(
-                Math.Pow(mouseCoords.X - (_cs.Position.X + _cs.Origin.X), 2) +
-                Math.Pow(mouseCoords.Y - (_cs.Position.Y + _cs.Origin.Y), 2));
+                Math.Pow(x - (_cs.Position.X + _cs.Origin.X), 2) +
+                Math.Pow(y - (_cs.Position.Y + _cs.Origin.Y), 2));
             return (dist < _cs.Radius);
         }
 

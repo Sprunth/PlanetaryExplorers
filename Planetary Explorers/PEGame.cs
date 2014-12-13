@@ -55,9 +55,13 @@ namespace Planetary_Explorers
         {
             // TODO: Use actual display rather than this generic one
             var d = new Display(ScreenSize);
-            gm = new GameManager(window, d);
-
-            gm.ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000,2000), new Vector2u(800,500));
+            gm = new GameManager(window, d)
+            {
+                ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000, 2000), new Vector2u(800, 500))
+                {
+                    Position = new Vector2f(40,90)
+                }
+            };           
         }
 
         public void Run()
