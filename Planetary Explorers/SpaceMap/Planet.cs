@@ -63,7 +63,7 @@ namespace Planetary_Explorers.SpaceMap
             return ContainsVector(vec.X, vec.Y);
         }
 
-        public bool ContainsVector(double x, double y)
+        public override bool ContainsVector(double x, double y)
         {
             var mouseCoords = parentDisplay.Target.MapPixelToCoords(
                 new Vector2i((int)Math.Round(x), (int)Math.Round(y)));

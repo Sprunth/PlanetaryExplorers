@@ -125,7 +125,7 @@ namespace Planetary_Explorers
         /// </summary>
         protected virtual void OnResume()
         {
-            drawables.Add(new DrawableObject(this));
+            
         }
 
         /// <summary>

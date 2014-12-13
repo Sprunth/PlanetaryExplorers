@@ -13,7 +13,7 @@ namespace Planetary_Explorers.SpaceMap
 {
     class SpaceGrid : Display
     {
-        private View view;
+        private View _view;
         private RenderTexture gridTexture;
         private Vertex[] gridlines; 
         private Sprite grid;
@@ -21,7 +21,7 @@ namespace Planetary_Explorers.SpaceMap
         private bool dragging;
         private Vector2i mousePrevDragPos;
 
-        private List<Planet> allPlanets;
+        private readonly List<Planet> allPlanets;
 
         public SpaceGrid(Vector2u mapSize, Vector2u displaySize)
             : base(displaySize)
@@ -72,10 +72,10 @@ namespace Planetary_Explorers.SpaceMap
             gridlines = verticies.ToArray();
 
             gridTexture.Clear(new Color(190, 190, 190));
-            //view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));
-            view = new View(new FloatRect(0, 0, DisplayView.Size.X, DisplayView.Size.Y));
-            DisplayView = view;
-            //gridTexture.SetView(view);
+            //_view = new View(new FloatRect(0,0,displaySize.X, displaySize.Y));
+            _view = new View(new FloatRect(0, 0, DisplayView.Size.X, DisplayView.Size.Y));
+            DisplayView = _view;
+            //gridTexture.SetView(_view);
             gridTexture.Draw(gridlines, PrimitiveType.Lines);
             gridTexture.Display();
 
@@ -92,9 +92,9 @@ namespace Planetary_Explorers.SpaceMap
         {
             if (e.Code == Keyboard.Key.Right)
             {
-                view.Move(new Vector2f(10, 0));
-                DisplayView = view;
-                //gridTexture.SetView(view);
+                _view.Move(new Vector2f(10, 0));
+                DisplayView = _view;
+                //gridTexture.SetView(_view);
             }
         }
 
@@ -106,9 +106,9 @@ namespace Planetary_Explorers.SpaceMap
             {
                 var mousePos = new Vector2i(e.X, e.Y);
                 var diffVec = mousePos - mousePrevDragPos;
-                view.Move(new Vector2f(-diffVec.X / 1f, -diffVec.Y / 1f));
-                DisplayView = view;
-                //gridTexture.SetView(view);
+                _view.Move(new Vector2f(-diffVec.X / 1f, -diffVec.Y / 1f));
+                DisplayView = _view;
+                //gridTexture.SetView(_view);
                 mousePrevDragPos = mousePos;
             }
         }

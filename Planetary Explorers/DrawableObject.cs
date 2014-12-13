@@ -13,9 +13,9 @@ using SFML.Window;
 
 namespace Planetary_Explorers
 {
-    class DrawableObject : IUpdateable
+    abstract class DrawableObject : IUpdateable
     {
-        protected Display parentDisplay;
+        protected readonly Display parentDisplay;
 
         public DrawableObject(Display parentDisplay)
         {
@@ -57,5 +57,7 @@ namespace Planetary_Explorers
         {
             
         }
+
+        public abstract bool ContainsVector(double x, double y);
     }
 }
