@@ -80,6 +80,7 @@
     <Compile Include="GameManager.cs" />
     <Compile Include="Gui\FontManager.cs" />
     <Compile Include="Gui\Label.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="IUpdateable.cs" />
     <Compile Include="PEGame.cs" />

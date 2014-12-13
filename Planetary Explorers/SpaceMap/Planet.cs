@@ -9,7 +9,6 @@ using Planetary_Explorers.Gui;
 using SFML.Graphics;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
-using Image = System.Drawing.Image;
 
 namespace Planetary_Explorers.SpaceMap
 {
@@ -25,13 +24,13 @@ namespace Planetary_Explorers.SpaceMap
 
         public Planet(Display parentDisplay) : base(parentDisplay)
         {
-            _cs = new CircleShape(32, 32)
+            _cs = new CircleShape(64, 64)
             {
                 Position = new Vector2f(256, 128),
                 OutlineThickness = 3,
-                OutlineColor = new Color(20, 20, 20),
-                Origin = new Vector2f(16, 16)
+                OutlineColor = new Color(20, 20, 20)
             };
+            _cs.Origin = new Vector2f(_cs.Radius/2f, _cs.Radius/2f);
             //_cs.FillColor = SFML.Graphics.Color.Magenta;
             _cs.Texture = GeneratePlanetTexture(new Vector2u((uint) _cs.Radius*2, (uint) _cs.Radius*2));
             AddItemToDraw(_cs, 5);
@@ -80,15 +79,14 @@ namespace Planetary_Explorers.SpaceMap
         private static Texture GeneratePlanetTexture(Vector2u texSize)
         {
             var imgSize = texSize;
-            module = new Perlin(3, 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
-            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, module, 2, 6, 1, 5, false);
+            module = new Perlin(random.Next(2,3), 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
+            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, module, 0, 6, 0, 6, false);
             heightMap = heightMapBuilder.Build();
 
             var texColors = new GradientColour();
-            texColors.AddGradientPoint(-1, System.Drawing.Color.DimGray);
-            texColors.AddGradientPoint(0.0, System.Drawing.Color.SteelBlue);
-            texColors.AddGradientPoint(0.8, System.Drawing.Color.Tan);
-            texColors.AddGradientPoint(1, System.Drawing.Color.WhiteSmoke);
+            texColors.AddGradientPoint(-1, GenerateProceduralColor());
+            texColors.AddGradientPoint(-0.2 + random.NextDouble()*0.4, GenerateProceduralColor());
+            texColors.AddGradientPoint(1, GenerateProceduralColor());
             var renderer = new ImageBuilder(heightMap, texColors);
             var renderedImg = renderer.Render();
             var img = new Bitmap(renderedImg);
@@ -106,5 +104,21 @@ namespace Planetary_Explorers.SpaceMap
             var returnTex = new Texture(sfmlImg);
             return returnTex;
         }
+
+        /// <summary>
+        /// Fancy color generation that looks better than just pure random
+        /// </summary>
+        /// <returns></returns>
+        private static System.Drawing.Color GenerateProceduralColor()
+        {           
+            _colorGenerationCounter += random.Next(1,6);
+            // golden ratio
+            var ret = Helper.HSL2RGB((double)(((Decimal)(colorOffset + (0.618033988749895f * _colorGenerationCounter))) % 1.0m), 0.5, 0.5);
+            Debug.WriteLine(ret);
+            return ret;
+        }
+        private static readonly float colorOffset = (float)random.NextDouble();
+        private static int _colorGenerationCounter = 2;
+
     }
 }
