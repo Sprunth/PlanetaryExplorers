@@ -15,14 +15,13 @@ namespace Planetary_Explorers
 {
     class PEGame
     {
-        RenderWindow window;
+        readonly RenderWindow _window;
         public Vector2u ScreenSize { get; set; }
 
-        RenderTexture target;
+        readonly RenderTexture _target;
+        readonly Sprite _targetSpr;
 
-        Sprite spr;
-
-        private GameManager gm;
+        private GameManager _gm;
 
         public PEGame()
         {
@@ -35,19 +34,19 @@ namespace Planetary_Explorers
                 MajorVersion = 0,
                 MinorVersion = 1
             };
-            window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Close, cs);
-            window.KeyPressed += window_KeyPressed;
-            window.MouseMoved += window_MouseMoved;
-            window.MouseButtonReleased += window_MouseButtonReleased;
+            _window = new RenderWindow(new VideoMode(ScreenSize.X, ScreenSize.Y), "Planetary Explorers", Styles.Close, cs);
+            _window.KeyPressed += window_KeyPressed;
+            _window.MouseMoved += window_MouseMoved;
+            _window.MouseButtonReleased += window_MouseButtonReleased;
 
-            window.SetFramerateLimit(60);
-            window.SetVerticalSyncEnabled(false);
-            window.Closed += window_Closed;
+            _window.SetFramerateLimit(60);
+            _window.SetVerticalSyncEnabled(false);
+            _window.Closed += window_Closed;
 
 
-            spr = new Sprite();
+            _targetSpr = new Sprite();
 
-            target = new RenderTexture(ScreenSize.X, ScreenSize.Y)
+            _target = new RenderTexture(ScreenSize.X, ScreenSize.Y)
             { Smooth = true };
         }
 
@@ -55,7 +54,7 @@ namespace Planetary_Explorers
         {
             // TODO: Use actual display rather than this generic one
             var d = new Display(ScreenSize);
-            gm = new GameManager(window, d)
+            _gm = new GameManager(_window, d)
             {
                 ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000, 2000), new Vector2u(800, 500))
                 {
@@ -69,7 +68,7 @@ namespace Planetary_Explorers
             var frameStart = DateTime.Now;
             var lastFPS = 0.0;
 
-            while (window.IsOpen())
+            while (_window.IsOpen())
             {
                 frameStart = DateTime.Now;
 
@@ -81,9 +80,8 @@ namespace Planetary_Explorers
                 var fps = Math.Round(1 / (DateTime.Now - frameStart).TotalSeconds);
                 if ((int)fps != (int)lastFPS)
                 {
-                    window.SetTitle(string.Format("Planetary Explorers | FPS: {0}", fps));
+                    _window.SetTitle(string.Format("Planetary Explorers | FPS: {0}", fps));
                     lastFPS = fps;
-                    
                 }
             }
 
@@ -92,31 +90,26 @@ namespace Planetary_Explorers
 
         private void Update()
         {
-            window.DispatchEvents();
-            gm.Update();
+            _window.DispatchEvents();
+            _gm.Update();
         }
 
         private void Draw()
         {
-            target.Clear(new Color(210, 230, 200));
-            gm.Draw(target);
-            target.Display();
+            _target.Clear(new Color(210, 230, 200));
+            _gm.Draw(_target);
+            _target.Display();
 
-            spr.Texture = target.Texture;
+            _targetSpr.Texture = _target.Texture;
 
-            window.Clear();
-            window.Draw(spr);
-            var cs = new CircleShape(20, 48);
-            cs.Position = new Vector2f(150,120);
-            cs.OutlineColor = Color.Black;
-            cs.OutlineThickness = 2;
-            window.Draw(cs);
-            window.Display();
+            _window.Clear();
+            _window.Draw(_targetSpr);
+            _window.Display();
         }
 
         private void window_Closed(object sender, EventArgs e)
         {
-            window.Close();
+            _window.Close();
         }
 
         void window_KeyPressed(object sender, KeyEventArgs e)
@@ -139,9 +132,8 @@ namespace Planetary_Explorers
 
         void Dispose()
         {
-            window.Dispose();
-            target.Dispose();
+            _window.Dispose();
+            _target.Dispose();
         }
-
     }
 }
