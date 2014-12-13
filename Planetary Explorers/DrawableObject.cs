@@ -58,6 +58,8 @@ namespace Planetary_Explorers
             
         }
 
+        public virtual bool ContainsVector(Vector2f vec)
+        { return ContainsVector(vec.X, vec.Y); }
         public abstract bool ContainsVector(double x, double y);
     }
 }
