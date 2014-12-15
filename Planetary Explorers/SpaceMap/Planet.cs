@@ -17,7 +17,10 @@ namespace Planetary_Explorers.SpaceMap
         private static readonly Random random = new Random();
         private static NoiseMap heightMap;
         private static PlanarNoiseMapBuilder heightMapBuilder;
-        private static Perlin module;
+        private static Perlin perlin;
+        private static RidgedMulti ridgedMulti;
+        private static Voronoi voronoi;
+        private static Select selectModule;
         
         private readonly CircleShape _cs;
         private readonly Label _hoverText;
@@ -79,8 +82,15 @@ namespace Planetary_Explorers.SpaceMap
         private static Texture GeneratePlanetTexture(Vector2u texSize)
         {
             var imgSize = texSize;
-            module = new Perlin(random.Next(2,3), 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
-            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, module, 0, 6, 0, 6, false);
+            perlin = new Perlin(random.Next(2,3), 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
+            ridgedMulti = new RidgedMulti(random.NextDouble()*2, 0.3, 2,NoiseQuality.Best, random.Next(0,1024));
+            voronoi = new Voronoi(0.1, random.NextDouble()*2, true, random.Next(0,1024));
+            selectModule = new Select(1.0, 1.0, 0.0);
+            selectModule.SetSourceModule(0, perlin);
+            selectModule.SetSourceModule(1, ridgedMulti);
+            selectModule.SetSourceModule(2, voronoi);
+            
+            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, selectModule, 1, 6, 1, 6, false);
             heightMap = heightMapBuilder.Build();
 
             var texColors = new GradientColour();
@@ -113,9 +123,13 @@ namespace Planetary_Explorers.SpaceMap
         {           
             _colorGenerationCounter += random.Next(1,6);
             // golden ratio
+#if DEBUG
             var ret = Helper.HSL2RGB((double)(((Decimal)(colorOffset + (0.618033988749895f * _colorGenerationCounter))) % 1.0m), 0.5, 0.5);
             Debug.WriteLine(ret);
             return ret;
+#else
+            return Helper.HSL2RGB((double)(((Decimal)(colorOffset + (0.618033988749895f * _colorGenerationCounter))) % 1.0m), 0.5, 0.5);
+#endif
         }
         private static readonly float colorOffset = (float)random.NextDouble();
         private static int _colorGenerationCounter = 2;

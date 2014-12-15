@@ -66,7 +66,7 @@ namespace Planetary_Explorers
         public void Run()
         {
             var frameStart = DateTime.Now;
-            var lastFPS = 0.0;
+            var lastFPS = 0;
 
             while (_window.IsOpen())
             {
@@ -77,8 +77,8 @@ namespace Planetary_Explorers
                 Draw();
 
                 // Not super accurate, espcially if frame is working too fast
-                var fps = Math.Round(1 / (DateTime.Now - frameStart).TotalSeconds);
-                if ((int)fps != (int)lastFPS)
+                var fps = (int)Math.Round(1 / (DateTime.Now - frameStart).TotalSeconds);
+                if (fps != lastFPS)
                 {
                     _window.SetTitle(string.Format("Planetary Explorers | FPS: {0}", fps));
                     lastFPS = fps;
