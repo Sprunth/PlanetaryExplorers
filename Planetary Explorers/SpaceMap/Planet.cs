@@ -22,21 +22,23 @@ namespace Planetary_Explorers.SpaceMap
         private static Voronoi voronoi;
         private static Select selectModule;
         
-        private readonly CircleShape _cs;
+        private readonly CircleShape _planet;
+        public Texture SurfaceTexture { get { return _planet.Texture; } }
         private readonly Label _hoverText;
 
         public Planet(Display parentDisplay) : base(parentDisplay)
         {
-            _cs = new CircleShape(64, 64)
+            _planet = new CircleShape(64, 64)
             {
                 Position = new Vector2f(256, 128),
                 OutlineThickness = 3,
                 OutlineColor = new Color(20, 20, 20)
             };
-            _cs.Origin = new Vector2f(_cs.Radius/2f, _cs.Radius/2f);
-            //_cs.FillColor = SFML.Graphics.Color.Magenta;
-            _cs.Texture = GeneratePlanetTexture(new Vector2u((uint) _cs.Radius*2, (uint) _cs.Radius*2));
-            AddItemToDraw(_cs, 5);
+            _planet.Origin = new Vector2f(_planet.Radius/2f, _planet.Radius/2f);
+            //_planet.FillColor = SFML.Graphics.Color.Magenta;
+            _planet.Texture = GeneratePlanetTexture(new Vector2u((uint) _planet.Radius*2, (uint) _planet.Radius*2));
+            
+            AddItemToDraw(_planet, 5);
 
             _hoverText = new Label("Planet", FontManager.ActiveFontManager, new Vector2u(100,40));
 
@@ -45,17 +47,18 @@ namespace Planetary_Explorers.SpaceMap
 
         void parentDisplay_OnMouseMove(object sender, MouseMoveEventArgs e, Vector2f displayCoords)
         {
+            //Debug.WriteLine("MousePos: {0} | Planet Center: {1}", displayCoords.X + " " + displayCoords.Y, _planet.Position);
             if (ContainsVector(displayCoords))
             {
                 // within planet's sprite
-                _cs.FillColor = new Color(255, 255, 255);
+                _planet.FillColor = new Color(255, 255, 255);
                 _hoverText.EventSubscribe(true, GameManager.ActiveWindow);
                 AddItemToDraw(_hoverText, 30);
                 _hoverText.Position = displayCoords + new Vector2f(20, -20);
             }
             else
             {
-                _cs.FillColor = new Color(200,200,200);
+                _planet.FillColor = new Color(200,200,200);
                 _hoverText.EventSubscribe(false, GameManager.ActiveWindow);
                 RemoveItemToDraw(_hoverText, 30);
             }
@@ -64,9 +67,9 @@ namespace Planetary_Explorers.SpaceMap
         public override bool ContainsVector(double x, double y)
         {
             var dist = Math.Sqrt(
-                Math.Pow(x - (_cs.Position.X + _cs.Origin.X), 2) +
-                Math.Pow(y - (_cs.Position.Y + _cs.Origin.Y), 2));
-            return (dist < _cs.Radius);
+                Math.Pow(x - (_planet.Position.X + _planet.Origin.X), 2) +
+                Math.Pow(y - (_planet.Position.Y + _planet.Origin.Y), 2));
+            return (dist < _planet.Radius);
         }
 
         /// <summary>
@@ -75,11 +78,11 @@ namespace Planetary_Explorers.SpaceMap
         /// <param name="select">True for selected, False for not selected</param>
         public void Select(bool select)
         {
-            _cs.OutlineColor = select ? new Color(200, 210, 40) : new Color(20, 20, 20);
-            _cs.OutlineThickness = select ? 4 : 3;
+            _planet.OutlineColor = select ? new Color(200, 210, 40) : new Color(20, 20, 20);
+            _planet.OutlineThickness = select ? 4 : 3;
         }
 
-        private static Texture GeneratePlanetTexture(Vector2u texSize)
+        public static Texture GeneratePlanetTexture(Vector2u texSize)
         {
             var imgSize = texSize;
             perlin = new Perlin(random.Next(2,3), 0.2, NoiseQuality.Best, 4, 0.7, random.Next(0, 1024));
@@ -90,7 +93,7 @@ namespace Planetary_Explorers.SpaceMap
             selectModule.SetSourceModule(1, ridgedMulti);
             selectModule.SetSourceModule(2, voronoi);
             
-            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, selectModule, 1, 6, 1, 6, false);
+            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, selectModule, 1, 6, 1, 6, true);
             heightMap = heightMapBuilder.Build();
 
             var texColors = new GradientColour();
@@ -100,14 +103,20 @@ namespace Planetary_Explorers.SpaceMap
             var renderer = new ImageBuilder(heightMap, texColors);
             var renderedImg = renderer.Render();
             var img = new Bitmap(renderedImg);
-            var sfmlImg = new SFML.Graphics.Image(imgSize.X, imgSize.Y);
+            var sfmlImg = new SFML.Graphics.Image(imgSize.X*2, imgSize.Y*2);
 
-            for (uint x = 0; x < imgSize.X; x++)
+            for (uint i = 0; i < 2; i++)
             {
-                for (uint y = 0; y < imgSize.Y; y++)
+                for (uint j = 0; j < 2; j++)
                 {
-                    var col = img.GetPixel((int) x, (int) y);
-                    sfmlImg.SetPixel(x, y, new Color(col.R, col.G, col.B, col.A));
+                    for (uint x = 0; x < imgSize.X; x++)
+                    {
+                        for (uint y = 0; y < imgSize.Y; y++)
+                        {
+                            var col = img.GetPixel((int)x, (int)y);
+                            sfmlImg.SetPixel(i*imgSize.X + x, j*imgSize.Y + y, new Color(col.R, col.G, col.B, col.A));
+                        }
+                    }
                 }
             }
 

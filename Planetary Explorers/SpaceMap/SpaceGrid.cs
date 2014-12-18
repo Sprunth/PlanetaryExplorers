@@ -113,21 +113,40 @@ namespace Planetary_Explorers.SpaceMap
 
         void SpaceGrid_OnMousePress(object sender, MouseButtonEventArgs e, Vector2f displayCoords)
         {
-            _dragging = true;
-            _mousePrevDragPos = new Vector2i(e.X, e.Y);
+            switch (e.Button)
+            {
+                case Mouse.Button.Left:
+                {
+                    _dragging = true;
+                    _mousePrevDragPos = new Vector2i(e.X, e.Y);
+                    break;
+                }
+                case Mouse.Button.Middle:
+                    break;
+                case Mouse.Button.Right:
+                    break;
+            }
         }
 
         void SpaceGrid_OnMouseRelease(object sender, MouseButtonEventArgs e, Vector2f displayCoords)
         {
-            _dragging = false;
-
-            foreach (var planet in allPlanets)
+            switch (e.Button)
             {
-                if (planet.ContainsVector(displayCoords.X, displayCoords.Y))
-                    planet.Select(true);
-                else
-                    planet.Select(false);
+                case Mouse.Button.Left:
+                {
+                    _dragging = false;
 
+                    allPlanets.ForEach(
+                        planet => planet.Select(
+                                    planet.ContainsVector(displayCoords.X, displayCoords.Y)
+                                    ));
+
+                    break;
+                }
+                case Mouse.Button.Middle:
+                    break;
+                case Mouse.Button.Right:
+                    break;
             }
         }
     }

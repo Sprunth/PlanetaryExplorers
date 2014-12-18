@@ -18,6 +18,7 @@ namespace Planetary_Explorers
        
         private Sprite spr;
         public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
+        public Vector2f Scale { get { return spr.Scale; } set { spr.Scale = value; } }
 
         public RenderTarget Target { get { return target; } }
 
@@ -60,7 +61,11 @@ namespace Planetary_Explorers
 
             BackgroundColor = new Color(0, 0, 0, 0);
 
-            spr = new Sprite();
+            spr = new Sprite()
+            {
+                Scale = new Vector2f(0.5f,0.5f)
+            };
+
         }
     
         public virtual void Update()
@@ -184,7 +189,7 @@ namespace Planetary_Explorers
 
         private void MouseMoved(object sender, MouseMoveEventArgs e)
         {
-            if (OnMouseMove != null)
+            if (OnMouseMove != null && DisplayContainsMouseMove(e))
             {
                 OnMouseMove(sender, e, MouseCoordToDisplayCoord(e));
             }
@@ -210,11 +215,23 @@ namespace Planetary_Explorers
         { return MouseCoordToDisplayCoord(new Vector2i(e.X, e.Y)); }
         private Vector2f MouseCoordToDisplayCoord(MouseButtonEventArgs e)
         { return MouseCoordToDisplayCoord(new Vector2i(e.X, e.Y)); }
-
         private Vector2f MouseCoordToDisplayCoord(Vector2i e)
         {
-            return target.MapPixelToCoords(
-                e - new Vector2i((int)Math.Round(Position.X), (int)Math.Round(Position.Y))
+            //e.X *= 2;
+            //e.Y *= 2;
+            var rawDisplayCoord = e - new Vector2i((int) Math.Round(Position.X), (int) Math.Round(Position.Y));
+            rawDisplayCoord.X = (int)Math.Round(rawDisplayCoord.X * 1 / spr.Scale.X);
+            rawDisplayCoord.Y = (int)Math.Round(rawDisplayCoord.Y * 1 / spr.Scale.Y);
+            return target.MapPixelToCoords(rawDisplayCoord);
+        }
+
+        private bool DisplayContainsMouseMove(MouseMoveEventArgs e)
+        {
+            return (
+                (Position.X <= e.X) &&
+                (Position.X + target.Size.X >= e.X) &&
+                (Position.Y <= e.Y) &&
+                (Position.Y + target.Size.Y >= e.Y)
                 );
         }
     }
@@ -233,6 +250,6 @@ namespace Planetary_Explorers
             return 0;
         }
 
-        public static IComparer<Tuple<Drawable, uint>> Comparer = new ZlevelDrawableCompare();
+        public static readonly IComparer<Tuple<Drawable, uint>> Comparer = new ZlevelDrawableCompare();
     }
 }
