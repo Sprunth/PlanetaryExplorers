@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using Noise;
 using Noise.Modules;
 using Noise.Utils;
@@ -13,15 +14,7 @@ using Color = SFML.Graphics.Color;
 namespace Planetary_Explorers.SpaceMap
 {
     internal class Planet : DrawableObject
-    {
-        private static readonly Random random = new Random();
-        private static NoiseMap heightMap;
-        private static PlanarNoiseMapBuilder heightMapBuilder;
-        private static Perlin perlin;
-        private static RidgedMulti ridgedMulti;
-        private static Voronoi voronoi;
-        private static Select selectModule;
-        
+    {       
         private readonly CircleShape _planet;
         public Texture SurfaceTexture { get { return _planet.Texture; } }
         private readonly Label _hoverText;
@@ -82,6 +75,14 @@ namespace Planetary_Explorers.SpaceMap
             _planet.OutlineThickness = select ? 4 : 3;
         }
 
+        private static readonly Random random = new Random();
+        private static NoiseMap heightMap;
+        private static PlanarNoiseMapBuilder heightMapBuilder;
+        private static Perlin perlin;
+        private static RidgedMulti ridgedMulti;
+        private static Voronoi voronoi;
+        private static Select selectModule;
+
         public static Texture GeneratePlanetTexture(Vector2u texSize)
         {
             var imgSize = texSize;
@@ -93,7 +94,7 @@ namespace Planetary_Explorers.SpaceMap
             selectModule.SetSourceModule(1, ridgedMulti);
             selectModule.SetSourceModule(2, voronoi);
             
-            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, selectModule, 1, 6, 1, 6, true);
+            heightMapBuilder = new PlanarNoiseMapBuilder(imgSize.X, imgSize.Y, 0, selectModule, 1, 5, 1, 5, true);
             heightMap = heightMapBuilder.Build();
 
             var texColors = new GradientColour();
@@ -102,6 +103,7 @@ namespace Planetary_Explorers.SpaceMap
             texColors.AddGradientPoint(1, GenerateProceduralColor());
             var renderer = new ImageBuilder(heightMap, texColors);
             var renderedImg = renderer.Render();
+            renderedImg.Save("planet_texture_DEBUG.png", ImageFormat.Png);
             var img = new Bitmap(renderedImg);
             var sfmlImg = new SFML.Graphics.Image(imgSize.X*2, imgSize.Y*2);
 
