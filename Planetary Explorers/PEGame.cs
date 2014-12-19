@@ -44,7 +44,6 @@ namespace Planetary_Explorers
             _window.SetVerticalSyncEnabled(false);
             _window.Closed += window_Closed;
 
-
             _targetSpr = new Sprite();
 
             _target = new RenderTexture(ScreenSize.X, ScreenSize.Y)
@@ -57,15 +56,15 @@ namespace Planetary_Explorers
             var d = new Display(ScreenSize);
             _gm = new GameManager(_window, d)
             {
-                
+                /*
                 ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000, 2000), new Vector2u(800, 500))
                 {
                     Position = new Vector2f(40,90)
                 }
-                
-                //ActiveDisplayRoot = new PlanetDisplay(new Vector2u(600,500))
+                */
+                ActiveDisplayRoot = new PlanetDisplay(new Vector2u(600,500))
             };
-            //((PlanetDisplay)_gm.ActiveDisplayRoot).FocusedPlanet = new Planet(_gm.ActiveDisplayRoot);
+            ((PlanetDisplay)_gm.ActiveDisplayRoot).FocusedPlanet = new Planet(_gm.ActiveDisplayRoot);
         }
 
         public void Run()
