@@ -56,15 +56,15 @@ namespace Planetary_Explorers
             var d = new Display(ScreenSize);
             _gm = new GameManager(_window, d)
             {
-                /*
+                
                 ActiveDisplayRoot = new SpaceGrid(new Vector2u(2000, 2000), new Vector2u(800, 500))
                 {
                     Position = new Vector2f(40,90)
                 }
-                */
-                ActiveDisplayRoot = new PlanetDisplay(new Vector2u(600,500))
+                
+                //ActiveDisplayRoot = new PlanetDisplay(new Vector2u(600,500))
             };
-            ((PlanetDisplay)_gm.ActiveDisplayRoot).FocusedPlanet = new Planet(_gm.ActiveDisplayRoot);
+            //((PlanetDisplay)_gm.ActiveDisplayRoot).FocusedPlanet = new Planet(_gm.ActiveDisplayRoot);
         }
 
         public void Run()
@@ -126,7 +126,15 @@ namespace Planetary_Explorers
 
         void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
         {
-
+            if (e.Button == Mouse.Button.Middle)
+            {
+                var planet = ((SpaceGrid) _gm.ActiveDisplayRoot).allPlanets[0];
+                _gm.ActiveDisplayRoot = new PlanetDisplay(new Vector2u(600, 500))
+                {
+                    Position = new Vector2f(400,20)
+                };
+                ((PlanetDisplay) _gm.ActiveDisplayRoot).FocusedPlanet = planet;
+            }
         }
 
         void window_MouseMoved(object sender, MouseMoveEventArgs e)

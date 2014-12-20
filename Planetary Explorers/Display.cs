@@ -13,14 +13,14 @@ namespace Planetary_Explorers
 {
     class Display : IUpdateable, IDrawable, Drawable
     {
-        private RenderTexture target;
-        protected View DisplayView { get { return target.GetView(); } set { target.SetView(value);} }
+        private RenderTexture _target;
+        protected View DisplayView { get { return _target.GetView(); } set { _target.SetView(value);} }
        
-        private Sprite spr;
-        public Vector2f Position { get { return spr.Position; } set { spr.Position = value; } }
-        public Vector2f Scale { get { return spr.Scale; } set { spr.Scale = value; } }
+        private readonly Sprite _targetSpr;
+        public Vector2f Position { get { return _targetSpr.Position; } set { _targetSpr.Position = border.Position = value; } }
+        public Vector2f Scale { get { return _targetSpr.Scale; } set { _targetSpr.Scale = value; } }
 
-        public RenderTarget Target { get { return target; } }
+        public RenderTarget Target { get { return _target; } }
 
         public delegate void LostFocusHandler(object sender, EventArgs e);
         public event LostFocusHandler OnLostFocus;
@@ -37,35 +37,51 @@ namespace Planetary_Explorers
         public delegate void MouseReleaseHandler(object sender, MouseButtonEventArgs e, Vector2f displayCoords);
         public event MouseReleaseHandler OnMouseRelease;
         
-        protected List<IUpdateable> toUpdate;
-        private List<DrawableObject> drawables;
+        private readonly List<IUpdateable> toUpdate;
         /// <summary>
         /// SFML objects to draw
         /// Each contains a z-level for drawing
         /// Do not directly add to this list. Use AddItemToDraw
         /// </summary>
-        public List<Tuple<Drawable, uint>> toDraw;
+        private readonly List<Tuple<Drawable, uint>> toDraw;
 
-        public Color BackgroundColor { get; set; }
+        protected Color BackgroundColor { get; set; }
+        
+        private readonly RectangleShape border;
+        public bool ShowBorder
+        {
+            get { return border.OutlineColor.A == 255; }
+            set
+            {
+                border.OutlineColor = value ? 
+                    border.OutlineColor = new Color(border.OutlineColor.R, border.OutlineColor.G, border.OutlineColor.B, 255) :
+                    border.OutlineColor = new Color(border.OutlineColor.R, border.OutlineColor.G, border.OutlineColor.B, 0);
+            }
+        }
 
         public Display(Vector2u displaySize)
         {
             toUpdate = new List<IUpdateable>();
-            drawables = new List<DrawableObject>();
             toDraw = new List<Tuple<Drawable, uint>>();
 
-            target = new RenderTexture(displaySize.X, displaySize.Y)
+            _target = new RenderTexture(displaySize.X, displaySize.Y)
             {
                 Smooth = true
             };
 
             BackgroundColor = new Color(0, 0, 0, 0);
 
-            spr = new Sprite()
+            _targetSpr = new Sprite()
             {
                 Scale = new Vector2f(0.5f,0.5f)
             };
 
+            border = new RectangleShape(new Vector2f(displaySize.X * _targetSpr.Scale.X, displaySize.Y * _targetSpr.Scale.Y))
+            {
+                OutlineColor = Color.Black,
+                OutlineThickness = 2,
+                FillColor = Color.Transparent,
+            };
         }
     
         public virtual void Update()
@@ -83,14 +99,15 @@ namespace Planetary_Explorers
 
         public virtual void Draw(RenderTarget sourceTarget)
         {
-            target.Clear(BackgroundColor);
+            _target.Clear(BackgroundColor);
             foreach (var tuple in toDraw)
             {
-                target.Draw(tuple.Item1);
+                _target.Draw(tuple.Item1);
             }
-            target.Display();
-            spr.Texture = target.Texture;
-            sourceTarget.Draw(spr);//, new RenderStates(aa));
+            _target.Display();
+            _targetSpr.Texture = _target.Texture;
+            sourceTarget.Draw(_targetSpr);//, new RenderStates(aa));
+            sourceTarget.Draw(border);
         }
 
         void Drawable.Draw(RenderTarget target, RenderStates states)
@@ -163,12 +180,12 @@ namespace Planetary_Explorers
 
         protected void ResizeDisplay(Vector2u size)
         {
-            var viewTemp = target.GetView();
-            target = new RenderTexture(size.X, size.Y)
+            var viewTemp = _target.GetView();
+            _target = new RenderTexture(size.X, size.Y)
             {
                 Smooth = true
             };
-            target.SetView(viewTemp);
+            _target.SetView(viewTemp);
         }
 
         private void LostFocus(object sender, EventArgs e)
@@ -220,18 +237,18 @@ namespace Planetary_Explorers
             //e.X *= 2;
             //e.Y *= 2;
             var rawDisplayCoord = e - new Vector2i((int) Math.Round(Position.X), (int) Math.Round(Position.Y));
-            rawDisplayCoord.X = (int)Math.Round(rawDisplayCoord.X * 1 / spr.Scale.X);
-            rawDisplayCoord.Y = (int)Math.Round(rawDisplayCoord.Y * 1 / spr.Scale.Y);
-            return target.MapPixelToCoords(rawDisplayCoord);
+            rawDisplayCoord.X = (int)Math.Round(rawDisplayCoord.X * 1 / _targetSpr.Scale.X);
+            rawDisplayCoord.Y = (int)Math.Round(rawDisplayCoord.Y * 1 / _targetSpr.Scale.Y);
+            return _target.MapPixelToCoords(rawDisplayCoord);
         }
 
         private bool DisplayContainsMouseMove(MouseMoveEventArgs e)
         {
             return (
                 (Position.X <= e.X) &&
-                (Position.X + target.Size.X >= e.X) &&
+                (Position.X + _target.Size.X >= e.X) &&
                 (Position.Y <= e.Y) &&
-                (Position.Y + target.Size.Y >= e.Y)
+                (Position.Y + _target.Size.Y >= e.Y)
                 );
         }
     }

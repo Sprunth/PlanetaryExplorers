@@ -21,7 +21,7 @@ namespace Planetary_Explorers.SpaceMap
         private bool _dragging;
         private Vector2i _mousePrevDragPos;
 
-        private readonly List<Planet> allPlanets;
+        public readonly List<Planet> allPlanets;
 
         public SpaceGrid(Vector2u mapSize, Vector2u displaySize)
             : base(displaySize)

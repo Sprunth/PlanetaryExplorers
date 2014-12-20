@@ -28,6 +28,8 @@ namespace Planetary_Explorers.PlanetView
 
         public PlanetDisplay(Vector2u displaySize) : base(displaySize)
         {
+            BackgroundColor = new Color(20, 180, 50);
+
             _planetCircle = new CircleShape()
             {
                 Radius = 64,
