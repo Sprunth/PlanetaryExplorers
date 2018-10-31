@@ -11,6 +11,7 @@ using SFML.Graphics;
 using SFML.Window;
 
 using System.Diagnostics;
+using SFML.System;
 
 namespace Planetary_Explorers
 {
@@ -72,7 +73,7 @@ namespace Planetary_Explorers
             var frameStart = DateTime.Now;
             var lastFPS = 0;
 
-            while (_window.IsOpen())
+            while (_window.IsOpen)
             {
                 frameStart = DateTime.Now;
 
