@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 
 namespace Planetary_Explorers.Gui
@@ -20,7 +21,7 @@ namespace Planetary_Explorers.Gui
             fontMgr = fontManager;
 
             text = new Text(contents, fontManager[0], 18);
-            text.Color = Color.Red;
+            text.FillColor = Color.Red;
             
             var bounds = text.GetLocalBounds();
             background = new RectangleShape(new Vector2f(text.FindCharacterPos((uint)text.DisplayedString.Length).X, bounds.Height));

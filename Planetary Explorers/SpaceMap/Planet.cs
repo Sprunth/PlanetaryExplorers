@@ -8,6 +8,7 @@ using Noise.Modules;
 using Noise.Utils;
 using Planetary_Explorers.Gui;
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
 

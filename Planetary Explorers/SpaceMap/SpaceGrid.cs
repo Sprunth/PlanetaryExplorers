@@ -8,6 +8,7 @@ using SFML.Graphics;
 using SFML.Window;
 
 using Planetary_Explorers.Spaceships;
+using SFML.System;
 
 namespace Planetary_Explorers.SpaceMap
 {
